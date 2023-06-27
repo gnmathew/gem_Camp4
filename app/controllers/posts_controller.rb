@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   def index
-    @post = Post.all
+    @posts = Post.all
   end
 
   def new
@@ -8,11 +8,14 @@ class PostsController < ApplicationController
   end
 
   def create
-    debugger
-    post = Post.new(params[:post])
-      if post.save
-        redirect_to posts_path
-      end
+    # render json: params
+
+      @post = Post.new(params[:post].permit(:title, :content))
+      if @post.save
+            redirect_to posts_path
+      else
+        render :new, status: :unprocessable_entity
+    end
   end
 
 end

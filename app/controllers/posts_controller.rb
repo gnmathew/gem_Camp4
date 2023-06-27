@@ -1,4 +1,6 @@
 class PostsController < ApplicationController
+
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
   def index
     @posts = Post.all
   end
@@ -10,7 +12,7 @@ class PostsController < ApplicationController
   def create
     # render json: params
 
-    @post = Post.new(params[:post].permit(:title, :content))
+    @post = Post.new(post_params)
     if @post.save
       flash[:notice] = 'Post created successfully'
       redirect_to posts_path
@@ -19,12 +21,37 @@ class PostsController < ApplicationController
       render :new, status: :unprocessable_entity
     end
   end
-  def show
-    @post = Post.find(params[:id])
+
+  def show; end
+
+  def edit; end
+
+  def update
+    if @post.update(post_params)
+      flash[:notice] = 'Post updated successfully'
+      redirect_to posts_path
+    else
+      flash.now[:alert] = 'Post update failed'
+      render :edit, status: :unprocessable_entity
+    end
   end
 
-  def edit
-    @post = Post.find(params[:id])
+  def destroy
+
+    @post.destroy
+    flash[:notice] = 'Post destroyed successfully'
+    redirect_to posts_path
+  end
+
+
+  private
+
+   def set_post
+     @post = Post.find(params[:id])
+   end
+
+  def post_params
+      params.require(:post).permit(:title, :content)
   end
 
 end

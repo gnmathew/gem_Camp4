@@ -6,6 +6,19 @@ class CommentsController < ApplicationController
     @comments = @post.comments
   end
 
+  def new
+    @comment = @post.comments.build
+  end
+
+  def create
+    @comment = @post.comments.build(comment_params)
+    if @comment.save
+      flash[:notice] = 'Comment created successfully'
+      redirect_to post_comments_path(@post)
+    else
+      render :new
+    end
+  end
   def edit; end
 
   def update
@@ -28,22 +41,6 @@ class CommentsController < ApplicationController
   def set_post
     @post = Post.find params[:post_id]
   end
-
-  def new
-    @comment = @post.comments.build
-  end
-
-  def create
-    @comment = @post.comments.build(comment_params)
-    if @comment.save
-      flash[:notice] = 'Comment created successfully'
-      redirect_to post_comments_path(@post)
-    else
-      render :new
-    end
-  end
-
-  private
 
   def comment_params
     params.require(:comment).permit(:content)
